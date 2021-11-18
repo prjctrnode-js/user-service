@@ -1,14 +1,15 @@
 const logger = require('../helpers/Logger');
 
 const loggerMiddleware = async (ctx, next) => {
+  console.log(process.env.NODE_ENV === 'dev' ? 'debug' : 'info');
   logger.log({
-    message: `Req - Method: ${ctx.request.method}, Endpoint: ${ctx.request.url}`,
-    level: 'info',
+    message: `-->${ctx.request.method} ${ctx.request.url}`,
+    level: process.env.NODE_ENV === 'dev' ? 'debug' : 'info',
   });
   await next();
   logger.log({
-    message: `Res - Method: ${ctx.request.method}, Endpoint: ${ctx.request.url}, Status: ${ctx.response.status}`,
-    level: 'info',
+    message: `<--${ctx.request.method} ${ctx.request.url} ${ctx.response.status}`,
+    level: process.env.NODE_ENV === 'dev' ? 'debug' : 'info',
   });
 };
 
