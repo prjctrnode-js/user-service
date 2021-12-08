@@ -1,4 +1,5 @@
 const Router = require('@koa/router');
+
 const router = new Router();
 const pJson = require('../../../package.json');
 
@@ -7,7 +8,7 @@ router.get('/users/health', async (ctx) => {
   ctx.status = 200;
   ctx.body = JSON.stringify({
     succes: true,
-    message: `Name ${pJson.name}, verion ${pJson.version}`,
+    message: `Name ${pJson.name}, verion ${pJson.version}`
   });
 });
 
