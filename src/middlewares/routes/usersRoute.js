@@ -53,7 +53,7 @@ router.get('/users', async (ctx) => {
       });
     });
   const video = await axios
-    .get(process.env.HISTORY_SERVICE, {
+    .get(process.env.VIDEO_SEVICE, {
       params: {
         userId: id
       }
