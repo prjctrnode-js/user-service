@@ -1,61 +1,39 @@
-const axios = require('axios');
-const logger = require('../helpers/logger');
 const db = require('../db/models');
+const request = require('../helpers/request');
 
 const getUserInfo = async (ctx) => {
-  const { id } = ctx.request.query;
+  const { id } = ctx.params;
   const user = await db.Users.findOne({
     where: {
       id
     }
   });
-  const subscriptions = await axios
-    .get(process.env.SUBSCRIPTIONS_SERVICE, {
-      params: {
-        userId: id
-      }
-    })
-    .then((res) => res.data.data)
-    .catch((e) => {
-      logger.log({
-        message: e.message,
-        level: 'info'
-      });
-    });
-  const video = await axios
-    .get(process.env.VIDEO_SEVICE, {
-      params: {
-        userId: id
-      }
-    })
-    .then((res) => res.data.data)
-    .catch((e) => {
-      logger.log({
-        message: e.message,
-        level: 'info'
-      });
-    });
-  const history = await axios
-    .get(process.env.HISTORY_SERVICE, {
-      params: {
-        userId: id
-      }
-    })
-    .then((res) => res.data.data)
-    .catch((e) => {
-      logger.log({
-        message: e.message,
-        level: 'info'
-      });
-    });
+  if (!user) {
+    ctx.status = 404;
+    ctx.body = { success: false, message: 'user is not found' };
+    return;
+  }
+  const subscriptions = await request(
+    process.env.SUBSCRIPTIONS_SERVICE,
+    'GET',
+    {
+      userId: id
+    }
+  );
+  const video = await request(process.env.VIDEO_SEVICE, 'GET', {
+    userId: id
+  });
+  const history = await request(process.env.HISTORY_SERVICE, 'GET', {
+    userId: id
+  });
   ctx.body = {
     success: true,
     message: 'Success',
     data: {
       user,
-      subscriptions,
-      video,
-      history
+      subscriptions: subscriptions.data,
+      video: video.data,
+      history: history.data
     }
   };
 };

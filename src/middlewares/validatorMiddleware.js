@@ -2,8 +2,8 @@ const Joi = require('joi');
 const logger = require('../helpers/logger');
 
 const schema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30),
-  email: Joi.string().email(),
+  name: Joi.string().alphanum().min(3).max(30).required(),
+  email: Joi.string().email().required(),
   userId: Joi.number().integer()
 }).with('name', 'email');
 

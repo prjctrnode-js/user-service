@@ -12,10 +12,10 @@ const usersRoute = new Router();
 
 healthRoute.get('/users/health', usersHealth);
 usersRoute.post('/users', createUser);
-usersRoute.get('/users/subscriptions', getUserSubscriptions);
-usersRoute.get('/users/history', getUserHistory);
-usersRoute.get('/users/videos', getUserVideos);
-usersRoute.get('/users', getUserInfo);
+usersRoute.get('/users/:id/subscriptions', getUserSubscriptions);
+usersRoute.get('/users/:id/history', getUserHistory);
+usersRoute.get('/users/:id/videos', getUserVideos);
+usersRoute.get('/users/:id', getUserInfo);
 
 const router = combineRouters(healthRoute, usersRoute);
 
