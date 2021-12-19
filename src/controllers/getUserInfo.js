@@ -1,39 +1,42 @@
 const db = require('../db/models');
 const request = require('../helpers/request');
 
-const getUserInfo = async (ctx) => {
-  const { id } = ctx.params;
+const getUserInfo = async (id) => {
   const user = await db.Users.findOne({
     where: {
       id
     }
   });
   if (!user) {
-    ctx.status = 404;
-    ctx.body = { success: false, message: 'user is not found' };
-    return;
+    return {
+      status: 404,
+      body: { success: false, message: 'user is not found' }
+    };
   }
   const subscriptions = await request(
-    process.env.SUBSCRIPTIONS_SERVICE,
+    'http://127.0.0.1:3008/subscriptions',
     'GET',
     {
       userId: id
     }
   );
-  const video = await request(process.env.VIDEO_SEVICE, 'GET', {
+  const video = await request('http://127.0.0.1:3008/videos', 'GET', {
     userId: id
   });
-  const history = await request(process.env.HISTORY_SERVICE, 'GET', {
+  const history = await request('http://127.0.0.1:3008/history', 'GET', {
     userId: id
   });
-  ctx.body = {
-    success: true,
-    message: 'Success',
-    data: {
-      user,
-      subscriptions: subscriptions.data,
-      video: video.data,
-      history: history.data
+  return {
+    status: 200,
+    body: {
+      success: true,
+      message: 'Success',
+      data: {
+        user,
+        subscriptions: subscriptions.data,
+        video: video.data,
+        history: history.data
+      }
     }
   };
 };
