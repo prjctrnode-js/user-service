@@ -8,10 +8,8 @@ const getUserVideos = async (id, limit) => {
     }
   });
   if (!user) {
-    return {
-      status: 404,
-      body: { success: false, message: 'user is not found' }
-    };
+    const error = { success: false, message: 'user is not found' };
+    throw error;
   }
   const { data } = await axios.get('http://127.0.0.1:3008/videos', {
     params: {

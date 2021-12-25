@@ -21,8 +21,10 @@
   "dependencies": {
     "@koa/router": "^10.1.1",
     "axios": "^0.24.0",
+    "bcryptjs": "^2.4.3",
     "dotenv-defaults": "^3.0.0",
     "joi": "^17.4.3",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
     "koa-combine-routers": "^4.0.2",
