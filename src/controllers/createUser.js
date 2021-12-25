@@ -7,13 +7,11 @@ const createUser = async (name, email) => {
     }
   });
   if (res) {
-    return {
-      status: 400,
-      body: {
-        succes: false,
-        message: 'user with this email already exists'
-      }
+    const error = {
+      statusCode: 400,
+      message: 'user with this email already exists'
     };
+    throw error;
   }
   const data = await db.Users.create({
     name,

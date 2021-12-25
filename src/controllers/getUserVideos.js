@@ -8,17 +8,21 @@ const getUserVideos = async (id, limit) => {
     }
   });
   if (!user) {
-    return {
-      status: 404,
-      body: { success: false, message: 'user is not found' }
+    const error = {
+      statusCode: 400,
+      message: 'user is not found'
     };
+    throw error;
   }
-  const { data } = await axios.get('http://127.0.0.1:3008/videos', {
-    params: {
-      limit,
-      userId: id
+  const { data } = await axios.get(
+    `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_VIDEO_PATH}`,
+    {
+      params: {
+        limit,
+        userId: id
+      }
     }
-  });
+  );
   return {
     status: 200,
     body: {
