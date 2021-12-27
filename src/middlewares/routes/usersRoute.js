@@ -6,6 +6,7 @@ const getUserVideos = require('../../controllers/getUserVideos');
 const getUserInfo = require('../../controllers/getUserInfo');
 const loginUser = require('../../controllers/loginUser');
 const validatorMiddleware = require('../validatorMiddleware');
+const isAuth = require('../isAuth');
 
 const usersRoute = new Router();
 
@@ -21,9 +22,10 @@ usersRoute.post(
 );
 usersRoute.get(
   '/users/:id/subscriptions',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.user.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.user;
     const { limit } = ctx.request.query;
     const { status, body } = await getUserSubscriptions(id, limit);
     ctx.status = status;
@@ -32,9 +34,10 @@ usersRoute.get(
 );
 usersRoute.get(
   '/users/:id/history',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.user.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.user;
     const { limit } = ctx.request.query;
     const { status, body } = await getUserHistory(id, limit);
     ctx.status = status;
@@ -42,10 +45,11 @@ usersRoute.get(
   }
 );
 usersRoute.get(
-  '/users/:id/videos',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  '/users/videos',
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.user.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.user;
     const { limit } = ctx.request.query;
     const { status, body } = await getUserVideos(id, limit);
     ctx.status = status;
@@ -53,16 +57,16 @@ usersRoute.get(
   }
 );
 usersRoute.get(
-  '/users/:id',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  '/users',
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.user.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.user;
     const { status, body } = await getUserInfo(id);
     ctx.status = status;
     ctx.body = body;
   }
 );
-usersRoute.get('/users/me');
 usersRoute.post('/users/login', async (ctx) => {
   const { email, password } = ctx.request.body;
   const { status, body } = await loginUser(email, password);

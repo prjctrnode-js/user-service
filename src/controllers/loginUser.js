@@ -18,11 +18,11 @@ const LoginUser = async (email, password) => {
     };
   }
   const token = jwt.sign(
-    { id: user.id, email: user.email, name: user.name },
-    process.env.SECRET,
     {
-      expiresIn: '1d'
-    }
+      data: { id: user.id, email: user.email, name: user.name }
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1d' }
   );
   return {
     status: 200,

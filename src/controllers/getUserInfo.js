@@ -32,7 +32,7 @@ const getUserInfo = async (id) => {
       success: true,
       message: 'Success',
       data: {
-        user,
+        user: { id: user.id, name: user.name, email: user.email },
         subscriptions: subscriptions.data,
         video: video.data,
         history: history.data
