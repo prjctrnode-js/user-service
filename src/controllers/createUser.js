@@ -8,13 +8,11 @@ const createUser = async (name, email, password) => {
     }
   });
   if (res) {
-    return {
-      status: 400,
-      body: {
-        succes: false,
-        message: 'user with this email already exists'
-      }
+    const error = {
+      statusCode: 400,
+      message: 'user with this email already exists'
     };
+    throw error;
   }
   const salt = bcrypt.genSaltSync(12);
   const hashedPassword = await bcrypt.hash(password, salt);

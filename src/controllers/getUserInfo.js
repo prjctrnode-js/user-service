@@ -8,24 +8,33 @@ const getUserInfo = async (id) => {
     }
   });
   if (!user) {
-    return {
-      status: 404,
-      body: { success: false, message: 'user is not found' }
+    const error = {
+      statusCode: 400,
+      message: 'user is not found'
     };
+    throw error;
   }
   const subscriptions = await request(
-    'http://127.0.0.1:3008/subscriptions',
+    `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_SUBSCRIPTIONS_PATH}`,
     'GET',
     {
       userId: id
     }
   );
-  const video = await request('http://127.0.0.1:3008/videos', 'GET', {
-    userId: id
-  });
-  const history = await request('http://127.0.0.1:3008/history', 'GET', {
-    userId: id
-  });
+  const video = await request(
+    `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_VIDEO_PATH}`,
+    'GET',
+    {
+      userId: id
+    }
+  );
+  const history = await request(
+    `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_HISTORY_PATH}`,
+    'GET',
+    {
+      userId: id
+    }
+  );
   return {
     status: 200,
     body: {
