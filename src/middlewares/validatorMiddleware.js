@@ -10,10 +10,10 @@ const validatorMiddleware = (validator, data) => async (ctx, next) => {
     await next();
   } catch (err) {
     logger.log({
-      message: err,
+      message: err.message,
       level: 'info'
     });
-    ctx.status = 400;
+    ctx.status = err.statusCode || 400;
     ctx.body = { success: false, error: err.message };
   }
 };

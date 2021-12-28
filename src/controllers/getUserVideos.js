@@ -14,15 +14,15 @@ const getUserVideos = async (id, limit) => {
     };
     throw error;
   }
-  const { data } = await axios.get(
-    `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_VIDEO_PATH}`,
-    {
-      params: {
-        limit,
-        userId: id
-      }
+  const { data } = await axios({
+    url: `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_VIDEO_PATH}`,
+    method: 'GET',
+    headers: { 'g-token': process.env.GATEWAY_TOKEN },
+    params: {
+      limit,
+      userId: id
     }
-  );
+  });
   return {
     status: 200,
     body: {

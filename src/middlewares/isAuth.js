@@ -8,7 +8,6 @@ const isAuth = async (ctx, next) => {
     throw error;
   }
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
   if (new Date() > new Date(decodedToken.exp * 1000)) {
     const error = { statusCode: 401, message: 'token expired' };
     throw error;

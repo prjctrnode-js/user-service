@@ -14,15 +14,15 @@ const getUserHistory = async (id, limit) => {
     };
     throw error;
   }
-  const { data } = await axios.get(
-    `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_HISTORY_PATH}`,
-    {
-      params: {
-        userId: id,
-        limit
-      }
+  const { data } = await axios({
+    url: `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_HISTORY_PATH}`,
+    method: 'GET',
+    headers: { 'g-token': process.env.GATEWAY_TOKEN },
+    params: {
+      userId: id,
+      limit
     }
-  );
+  });
   return {
     status: 200,
     body: {
