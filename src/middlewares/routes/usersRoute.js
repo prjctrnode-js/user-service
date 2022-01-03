@@ -79,12 +79,19 @@ usersRoute.get(
     ctx.body = body;
   }
 );
-usersRoute.post('/users/login', async (ctx) => {
-  const { email, password } = ctx.request.body;
-  const { status, body } = await loginUser(email, password);
-  ctx.status = status;
-  ctx.body = body;
-});
+usersRoute.post(
+  '/users/login',
+  validatorMiddleware('login', (ctx) => ({
+    email: ctx.request.body.email,
+    password: ctx.request.body.password
+  })),
+  async (ctx) => {
+    const { email, password } = ctx.request.body;
+    const { status, body } = await loginUser(email, password);
+    ctx.status = status;
+    ctx.body = body;
+  }
+);
 usersRoute.get('/users/me', isAuth, async (ctx) => {
   if (ctx.user) {
     ctx.body = {
