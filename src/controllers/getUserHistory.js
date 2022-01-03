@@ -17,7 +17,7 @@ const getUserHistory = async (id, limit) => {
   const { data } = await axios({
     url: `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_HISTORY_PATH}`,
     method: 'GET',
-    headers: { 'g-token': process.env.GATEWAY_TOKEN },
+    headers: { 'g-token': process.env.HISTORY_TOKEN },
     params: {
       userId: id,
       limit

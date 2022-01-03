@@ -16,7 +16,7 @@ const getUserInfo = async (id) => {
   }
   const subscriptions = await request(
     `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_SUBSCRIPTIONS_PATH}`,
-    { 'g-token': process.env.GATEWAY_TOKEN },
+    { 'g-token': process.env.SUBSCRIBE_TOKEN },
     'GET',
     {
       userId: id
@@ -24,7 +24,7 @@ const getUserInfo = async (id) => {
   );
   const video = await request(
     `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_VIDEO_PATH}`,
-    { 'g-token': process.env.GATEWAY_TOKEN },
+    { 'g-token': process.env.VIDEO_TOKEN },
     'GET',
     {
       userId: id
@@ -32,7 +32,7 @@ const getUserInfo = async (id) => {
   );
   const history = await request(
     `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_HISTORY_PATH}`,
-    { 'g-token': process.env.GATEWAY_TOKEN },
+    { 'g-token': process.env.HISTORY_TOKEN },
     'GET',
     {
       userId: id
