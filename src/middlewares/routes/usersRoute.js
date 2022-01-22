@@ -31,7 +31,8 @@ usersRoute.get(
       const error = { statusCode: 401, message: 'invalid userId' };
       throw error;
     }
-    const { status, body } = await getUserSubscriptions(id, limit);
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserSubscriptions(id, limit, token);
     ctx.status = status;
     ctx.body = body;
   }
@@ -47,7 +48,8 @@ usersRoute.get(
       const error = { statusCode: 401, message: 'invalid userId' };
       throw error;
     }
-    const { status, body } = await getUserHistory(id, limit);
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserHistory(id, limit, token);
     ctx.status = status;
     ctx.body = body;
   }
@@ -63,7 +65,8 @@ usersRoute.get(
       const error = { statusCode: 401, message: 'invalid userId' };
       throw error;
     }
-    const { status, body } = await getUserVideos(id, limit);
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserVideos(id, limit, token);
     ctx.status = status;
     ctx.body = body;
   }
@@ -74,7 +77,8 @@ usersRoute.get(
   validatorMiddleware('getData', (ctx) => ({ userId: ctx.user.id })),
   async (ctx) => {
     const { id } = ctx.user;
-    const { status, body } = await getUserInfo(id);
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserInfo(id, token);
     ctx.status = status;
     ctx.body = body;
   }

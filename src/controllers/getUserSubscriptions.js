@@ -1,7 +1,7 @@
 const axios = require('axios');
 const db = require('../db/models');
 
-const getUserSubscriptions = async (id, limit) => {
+const getUserSubscriptions = async (id, limit, token) => {
   const user = await db.Users.findOne({
     where: {
       id
@@ -17,7 +17,7 @@ const getUserSubscriptions = async (id, limit) => {
   const { data } = await axios({
     url: `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_SUBSCRIPTIONS_PATH}`,
     method: 'GET',
-    headers: { 'g-token': process.env.GATEWAY_TOKEN },
+    headers: { 'x-token': token },
     params: {
       userId: id,
       limit
