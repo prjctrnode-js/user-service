@@ -1,7 +1,7 @@
 const db = require('../db/models');
 const request = require('../helpers/request');
 
-const getUserInfo = async (id) => {
+const getUserInfo = async (id, token) => {
   const user = await db.Users.findOne({
     where: {
       id
@@ -16,6 +16,7 @@ const getUserInfo = async (id) => {
   }
   const subscriptions = await request(
     `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_SUBSCRIPTIONS_PATH}`,
+    { 'x-token': token },
     'GET',
     {
       userId: id
@@ -23,6 +24,7 @@ const getUserInfo = async (id) => {
   );
   const video = await request(
     `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_VIDEO_PATH}`,
+    { 'x-token': token },
     'GET',
     {
       userId: id
@@ -30,6 +32,7 @@ const getUserInfo = async (id) => {
   );
   const history = await request(
     `http://${process.env.GATEWAY_HOST}:${process.env.GATEWAY_PORT}/${process.env.GATEWAY_HISTORY_PATH}`,
+    { 'x-token': token },
     'GET',
     {
       userId: id
@@ -41,7 +44,7 @@ const getUserInfo = async (id) => {
       success: true,
       message: 'Success',
       data: {
-        user,
+        user: { id: user.id, name: user.name, email: user.email },
         subscriptions: subscriptions.data,
         video: video.data,
         history: history.data

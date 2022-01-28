@@ -4,7 +4,9 @@ const getUserSubscriptions = require('../../controllers/getUserSubscriptions');
 const getUserHistory = require('../../controllers/getUserHistory');
 const getUserVideos = require('../../controllers/getUserVideos');
 const getUserInfo = require('../../controllers/getUserInfo');
+const loginUser = require('../../controllers/loginUser');
 const validatorMiddleware = require('../validatorMiddleware');
+const isAuth = require('../isAuth');
 
 const usersRoute = new Router();
 
@@ -12,53 +14,94 @@ usersRoute.post(
   '/users',
   validatorMiddleware('createUser', (ctx) => ctx.request.body),
   async (ctx) => {
-    const { name, email } = ctx.request.body;
-    const { status, body } = await createUser(name, email);
+    const { name, email, password } = ctx.request.body;
+    const { status, body } = await createUser(name, email, password);
     ctx.status = status;
     ctx.body = body;
   }
 );
 usersRoute.get(
   '/users/:id/subscriptions',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.request.params.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.request.params;
     const { limit } = ctx.request.query;
-    const { status, body } = await getUserSubscriptions(id, limit);
+    if (Number(id) !== Number(ctx.user.id)) {
+      const error = { statusCode: 401, message: 'invalid userId' };
+      throw error;
+    }
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserSubscriptions(id, limit, token);
     ctx.status = status;
     ctx.body = body;
   }
 );
 usersRoute.get(
   '/users/:id/history',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.request.params.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.request.params;
     const { limit } = ctx.request.query;
-    const { status, body } = await getUserHistory(id, limit);
+    if (Number(id) !== Number(ctx.user.id)) {
+      const error = { statusCode: 401, message: 'invalid userId' };
+      throw error;
+    }
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserHistory(id, limit, token);
     ctx.status = status;
     ctx.body = body;
   }
 );
 usersRoute.get(
   '/users/:id/videos',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.request.params.id })),
   async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.request.params;
     const { limit } = ctx.request.query;
-    const { status, body } = await getUserVideos(id, limit);
+    if (Number(id) !== Number(ctx.user.id)) {
+      const error = { statusCode: 401, message: 'invalid userId' };
+      throw error;
+    }
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserVideos(id, limit, token);
     ctx.status = status;
     ctx.body = body;
   }
 );
 usersRoute.get(
-  '/users/:id',
-  validatorMiddleware('getData', (ctx) => ({ userId: ctx.params.id })),
+  '/users',
+  isAuth,
+  validatorMiddleware('getData', (ctx) => ({ userId: ctx.user.id })),
   async (ctx) => {
-    const { id } = ctx.params;
-    const { status, body } = await getUserInfo(id);
+    const { id } = ctx.user;
+    const token = ctx.headers['x-token'];
+    const { status, body } = await getUserInfo(id, token);
     ctx.status = status;
     ctx.body = body;
   }
 );
+usersRoute.post(
+  '/users/login',
+  validatorMiddleware('login', (ctx) => ({
+    email: ctx.request.body.email,
+    password: ctx.request.body.password
+  })),
+  async (ctx) => {
+    const { email, password } = ctx.request.body;
+    const { status, body } = await loginUser(email, password);
+    ctx.status = status;
+    ctx.body = body;
+  }
+);
+usersRoute.get('/users/me', isAuth, async (ctx) => {
+  if (ctx.user) {
+    ctx.body = {
+      success: true,
+      data: { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email }
+    };
+  }
+});
 module.exports = usersRoute;
